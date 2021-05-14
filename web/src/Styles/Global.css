@@ -1,0 +1,15 @@
+body {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    justify-content: center;
+    align-items: center;
+    background: #014431;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    font-family: 'Indie Flower';
+}

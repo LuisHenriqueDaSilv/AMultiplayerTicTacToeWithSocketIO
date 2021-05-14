@@ -1,0 +1,19 @@
+.gameBoardContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-row: 1fr 1fr 1fr;
+    height: 100%;
+    width: 60%;
+
+    button {
+        display: flex;
+        height: 26.66vh;
+        width: 16vw;
+        background: none;
+        border: 2px solid #fff;
+        color: #fff;
+        font-size: 15rem;
+        justify-content: center;
+        align-items: center;
+    }
+}
