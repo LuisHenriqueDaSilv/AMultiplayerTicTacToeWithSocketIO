@@ -26,32 +26,31 @@ export default function GamePainel(){
                 </button>
             </form>
 
-            <div className={styles.gamemodeButtonsContainer}>
-                <button className={styles.selectedMode}>Offline</button>
-                <button>Online</button>
+            <div className={styles.gameOptionsButtonsContainer}>
+                <button>Restart match</button>
+                <button>Reset score</button>
             </div>
 
             <table cellSpacing={10} className={styles.rankingContainer}>
 
                 <thead>
                     <tr>
-                        <th>Nome</th>
-                        <th>Vitorias</th>
+                        <th>Username</th>
+                        <th>Symbol</th>
+                        <th>Wins</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     <tr>
-                        <td>Luis SilvaaaaaaLuis Silvaaaaaa</td>
+                        <td>LuisSilva</td>
+                        <td>Cross</td>
                         <td>15</td>
                     </tr>
                     <tr>
-                        <td>Undefined</td>
+                        <td>Teste</td>
+                        <td>Circle</td>
                         <td>12</td>
-                    </tr>
-                    <tr>
-                        <td>Undefined</td>
-                        <td>5</td>
                     </tr>
                 </tbody>
             </table>
