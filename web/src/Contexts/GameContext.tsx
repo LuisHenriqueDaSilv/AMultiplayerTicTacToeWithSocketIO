@@ -1,4 +1,5 @@
 import {createContext, useEffect, useState} from 'react'
+import socketIo from 'socket.io-client'
 
 //Utils
 import generateEmptyGamedata from '../Utils/GenerateEmptyGamedata'
@@ -12,19 +13,53 @@ const GameContext = createContext({} as ContextDataInterface)
 
 export default GameContext
 
-export function GameContextProvider({children}:any) {
+let socketIoClient:any
+
+export function GameContextProvider({children}:any) { 
 
     const [crossName, setCrossName] = useState<string>('')
     const [circleName, setCircleName] = useState<string>('')
     const [rank, setRank] = useState<RankInterface>(gerenateEmptyRank() as RankInterface)
     const [gamedata, setGamedata] = useState<[GameDataInterface]>(generateEmptyGamedata() as [GameDataInterface])
     const [playing, setPlaying] = useState<'O'|'X'>('O')
+    const [winPositions, setWinPositions] = useState<number[]|null>([])
+    const [gamemode, setGamemode] = useState<'multiplayer'| 'local'>('local')
+    
+
+    useEffect(() => {
+
+        resetScore(true)
+        if(gamemode === 'local'){
+            if(socketIoClient){
+                socketIoClient.disconnect()
+            }
+        }
+
+    }, [gamemode])
+
+    useEffect(() => {
+        
+        console.log('effect circlename')
+
+        if(gamemode === 'local'){
+            return
+        }
+
+        if(circleName){
+            socketIoClient = socketIo.connect('http://localhost:3003/', {query: {nickname: circleName}})
+
+            socketIoClient.on('rank', (rank:RankInterface) => {
+                setRank(rank)
+            })
+
+        }
+
+    }, [circleName])
 
     useEffect(() => {
         const hasWinnerResponse = hasWinner()
 
         if(hasWinnerResponse.winner){
-            alert(`we have winner! ${hasWinnerResponse.winner}.`)
 
             const newRank = {...rank}
 
@@ -49,7 +84,17 @@ export function GameContextProvider({children}:any) {
             }
 
             setRank(newRank)
-            return restartMatch(true)
+
+            setWinPositions(hasWinnerResponse.positions)
+            
+            setTimeout(() => {
+                alert(`we have winner! ${hasWinnerResponse.winner}.`)
+                setWinPositions(null)
+                return restartMatch(true)
+            }, 300)
+
+
+             
         }else{
 
             const emptyHouses = gamedata.filter((data) => {
@@ -63,6 +108,11 @@ export function GameContextProvider({children}:any) {
         }
 
     }, [gamedata]) 
+
+
+    const changeGamemode = (gamemode:'multiplayer'| 'local') => {
+        setGamemode(gamemode)
+    }
 
     const hasWinner = () => {
 
@@ -98,8 +148,8 @@ export function GameContextProvider({children}:any) {
         return
     }
 
-    const resetScore = () => {
-        if(window.confirm('Reset score?')){
+    const resetScore = (bypass?:boolean) => {
+        if(bypass || window.confirm('Reset score?')){
             setCircleName('')
             setCrossName('')
             setGamedata(generateEmptyGamedata() as [GameDataInterface])
@@ -151,7 +201,10 @@ export function GameContextProvider({children}:any) {
                 handleMove,
                 resetScore,
                 restartMatch,
-                addNickname
+                addNickname,
+                winPositions,
+                changeGamemode,
+                gamemode
             }}
         >
             {children}

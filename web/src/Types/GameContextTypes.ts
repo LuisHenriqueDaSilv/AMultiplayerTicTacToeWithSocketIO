@@ -19,9 +19,12 @@ export interface RankInterface{
 export interface ContextDataInterface{
     crossName: string,
     circleName: string,
-    playing: 'O'| 'X'
+    playing: 'O'| 'X',
+    winPositions: number[]| null,
+    gamemode: 'multiplayer'| 'local'
     restartMatch: () => void,
     resetScore: () => void,
+    changeGamemode: (gamemode: 'multiplayer'| 'local') => void,
     handleMove: (positionId:number) => void,
     addNickname: (symbol: 'X'|'O', nick:string) => void,
     gamedata: [

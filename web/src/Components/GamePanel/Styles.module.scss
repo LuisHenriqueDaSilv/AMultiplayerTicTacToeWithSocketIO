@@ -1,6 +1,6 @@
 .gamePanelContainer {
     display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 0.5fr 0.8fr 1fr 1.3fr 1fr;
     border-radius: 10px;
     width: 30%;
     margin-left: 4rem;
@@ -12,6 +12,7 @@
         justify-self: center;
     }
 }
+
 
 .rankingContainer {
     width: 100%;
@@ -25,6 +26,7 @@
     width: 100%;
     align-items: center;
     text-align: center;
+    border-top: 2px solid #00000025;
 
     div {
         display: flex;
@@ -65,7 +67,10 @@
 .gameOptionsButtonsContainer {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 1rem;
+    border-top: 2px solid #00000025;
+
 
     button {
         height: 4rem;
@@ -73,11 +78,6 @@
         font-size: 20px;
     }
 
-    .selectedMode {
-        font-size: 25px;
-        height: 4.5rem;
-        color: blue
-    }
 }
 
 .playingNowContainer {
@@ -102,4 +102,34 @@
             color: blue;
         }
     }
+}
+
+.gamemodeSelectorContainer {
+    height: 80%;
+    width: 100%;
+    border-top: 2px solid #00000025;
+    align-items: center;
+    text-align: center;
+
+
+    div {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+
+
+        button{
+            height: 80%;
+            width: 50%;
+            font-size: 1.5rem;
+        }
+
+        .selectedGamemodeButton {
+            background: #0000ff25;
+            height: 100%;
+            width: 50%;
+        }
+    }
+
+
 }

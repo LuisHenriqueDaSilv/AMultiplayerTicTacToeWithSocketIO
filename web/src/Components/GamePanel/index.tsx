@@ -17,7 +17,9 @@ export default function GamePainel(){
         rank,
         resetScore,
         restartMatch,
-        playing
+        playing,
+        changeGamemode,
+        gamemode
     } = useContext(GameContext)
 
     const [nickname, setNickname] = useState<string>('')
@@ -43,23 +45,46 @@ export default function GamePainel(){
                 TicTacToe
             </h1>
 
+            <div className={styles.gamemodeSelectorContainer}>
+                <h2>Game mode:</h2>
+                <div>
+                    <button
+                        onClick={() => {changeGamemode('multiplayer')}}
+                        className={gamemode === 'multiplayer'&&styles.selectedGamemodeButton}
+                    >
+                        Multiplayer
+                    </button>
+                    <button
+                        onClick={() => {changeGamemode('local')}}
+                        className={gamemode === 'local' &&styles.selectedGamemodeButton}
+
+                    >
+                        Local
+                    </button>
+                </div>
+            </div>
+
             <form onSubmit={handleSubmitAddNickname} className={styles.nickContainer}>
                 <h1>
                     {
-                        circleName && crossName? 'You need reset score to edit some nickname!' : (
-                            <>
-                                Nickname for
-                                {
-                                    !circleName?  ' circle ':(
-                                        <>
-                                            {
-                                                !crossName? ' cross ':null
-                                            }
-                                        </>
-                                    )
-                                }
-                                player
-                            </>
+                        gamemode === 'local'? (
+                            circleName && crossName? 'You need reset score to edit some nickname!' : (
+                                <>
+                                    Nickname for
+                                    {
+                                        !circleName?  ' circle ':(
+                                            <>
+                                                {
+                                                    !crossName? ' cross ':null
+                                                }
+                                            </>
+                                        )
+                                    }
+                                    player
+                                </>
+                            )
+                        ) : (
+                            circleName? 'You need to switch the game mode to local and then multiplayer again to edit your nickname':'Your nickname'
                         )
                     }
                 </h1>
@@ -70,21 +95,40 @@ export default function GamePainel(){
                         placeholder="Nick"
                         maxLength={20}
                         onChange={(e) => setNickname(e.target.value)}
-                        disabled={circleName && crossName? true: false}
+                        disabled={
+                            gamemode === 'multiplayer'? (
+                                circleName? true:false
+                            ):(
+                                circleName && crossName?true:false
+                            )
+                        }
                         value={nickname}
                     />
-                    <button>
+                    <button
+                        disabled={
+                            gamemode === 'multiplayer'? (
+                                circleName? true:false
+                            ):(
+                                circleName && crossName?true:false
+                            )
+                        }
+                    >
                         <AiOutlineCheck
                             size="1.5rem"
                             color="#014431"
+
                         />
                     </button>
                 </div>
             </form>
 
             <div className={styles.gameOptionsButtonsContainer}>
-                <button onClick={restartMatch}>Restart match</button>
-                <button onClick={resetScore}>Reset score</button>
+                <button onClick={restartMatch}>
+                    {
+                        gamemode === 'multiplayer'?'Give up the ':'Restart '
+                    }
+                    match</button>
+                <button disabled={gamemode==='multiplayer'} onClick={resetScore}>Reset score</button>
             </div>
 
             <div className={styles.playingNowContainer}>
