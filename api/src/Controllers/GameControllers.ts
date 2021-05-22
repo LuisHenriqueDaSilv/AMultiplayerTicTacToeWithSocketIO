@@ -86,7 +86,7 @@ class GameControllers{
 
         }
 
-        const emptyHouses = match.gamedata.map((house) => {
+        const emptyHouses = match.gamedata.filter((house) => {
             return house.value === 'empty'
         })
 

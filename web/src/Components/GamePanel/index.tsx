@@ -124,11 +124,7 @@ export default function GamePainel(){
             </form>
 
             <div className={styles.gameOptionsButtonsContainer}>
-                <button onClick={restartMatch}>
-                    {
-                        gamemode === 'multiplayer'?'Give up the ':'Restart '
-                    }
-                    match</button>
+                <button disabled={gamemode==='multiplayer'} onClick={restartMatch}>Restart match</button>
                 <button disabled={gamemode==='multiplayer'} onClick={resetScore}>Reset score</button>
             </div>
 

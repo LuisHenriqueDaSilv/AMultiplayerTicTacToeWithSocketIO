@@ -59,7 +59,7 @@ export function GameContextProvider({children}:any) {
 
         if(onlineName){
 
-            socketIoClient = socketIo.connect('http://localhost:3003/', {query: {nickname: onlineName}})
+            socketIoClient = socketIo.connect('https://tictactoeapii.herokuapp.com/', {query: {nickname: onlineName}})
 
             socketIoClient.on('rank', (rank:RankInterface) => {
                 setRank(rank)
