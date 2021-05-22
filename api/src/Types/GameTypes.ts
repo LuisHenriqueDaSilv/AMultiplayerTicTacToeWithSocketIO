@@ -17,14 +17,6 @@ export interface playerInterface {
     wins: number,
     username: string,
     id: string,
-    awaitingMatch: boolean
-}
-
-export interface rankCell {
-    id: string | null,
-    username: string,
-    wins: number,
-    symbol: 'N/A'
 }
 
 export interface matchInterface {
@@ -37,22 +29,10 @@ export interface matchInterface {
     players: [
         {
             username: string,
-            id: string
-        },
-        {
-            username: string,
-            id: string
-        },
+            id: string,
+            symbol: 'X'| 'O'
+        }
     ],
-    roomId: string
-}
-
-export interface gamedataInterface {
-    id: number,
-    value: 'X'| 'O'| 'empty'
-}
-
-export interface gamePlayerCell{
-    username: string,
-    id: string
+    roomId: number,
+    inPlaying: string
 }

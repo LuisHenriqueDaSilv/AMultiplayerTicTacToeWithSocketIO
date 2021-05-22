@@ -52,6 +52,11 @@ export function GameContextProvider({children}:any) {
                 setRank(rank)
             })
 
+            socketIoClient.on('changeGamedata', (ba:any) => {
+                alert('changeGamedata')
+                console.log(ba)
+            })
+
         }
 
     }, [circleName])

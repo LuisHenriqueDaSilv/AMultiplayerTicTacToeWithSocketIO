@@ -1,5 +1,8 @@
 //Types
-import {rankInterface, playerInterface, rankCell, matchInterface, gamePlayerCell} from '../Types/GameTypes' 
+import {rankInterface, playerInterface, matchInterface} from '../Types/GameTypes' 
+
+//Utils
+import generateEmptyGamedata from '../Utils/GenerateEmptyGamedata'
 
 class GameControllers{
 
@@ -22,102 +25,7 @@ class GameControllers{
         }
     } as rankInterface
 
-    players = [
-
-    ] as playerInterface[]
-
     matchs = [] as matchInterface[]
-
-    handleRankChange = (socket:any) => {
-
-        let first:any = {
-            id: null,
-            username: 'N/A',
-            wins: 0
-        } as rankCell
-
-        let second = {
-            id: null,
-            username: 'N/A',
-            wins: 0
-        } as rankCell
-
-        this.players.map((player:playerInterface) => {
-
-            if(player.wins > second.wins){
-                second = {
-                    id: player.id,
-                    username: player.username,
-                    wins: player.wins,
-                    symbol: 'N/A'
-                }
-            }
-
-            if(player.wins > first.wins){
-
-                second = first
-
-                first = {
-                    id: player.id,
-                    username: player.username,
-                    wins: player.wins
-                }
-
-            }
-
-        })
-
-        this.rank.first = first
-        this.rank.second = second as rankCell
-
-
-        this.socketClient.emit('rank', this.rank)
-    }
-
-    addWinInPlayer = (playerId:string, socket:any) => {
-        
-    }
-
-    handleDesconnect = (socket:any) => {
-        const desconnectedPlayerId = socket.id
-        const desconnectedPlayerName = socket.handshake.query.nickname
-
-        if(!desconnectedPlayerName){return}
-
-        const matchsWithLeavePlayer = this.matchs.filter((match) => {
-            return match.players.filter((player) => {
-                return player.id === desconnectedPlayerId
-            })
-        })
-
-        if(matchsWithLeavePlayer.length > 0){
-
-            const matchIndex = this.matchs.indexOf(matchsWithLeavePlayer[0])
-
-            const winnerPlayer = this.matchs[matchIndex].players.filter((player) => {
-                return player.id !== desconnectedPlayerId
-            })[0]
-
-
-            socket.to(this.matchs[matchIndex].roomId).emit('win', {
-                winnnerId: winnerPlayer.id
-            })
-
-            this.addWinInPlayer(winnerPlayer.id, socket)
-
-            this.matchs.splice(matchIndex, 1)
-        }
-
-        const desconnectedPlayer = this.players.filter((player) => {
-            return player.id === desconnectedPlayerId
-        })[0]
-
-        const desconnectedPlayerIndex = this.players.indexOf(desconnectedPlayer)
-
-        if(desconnectedPlayerIndex > 0){
-            this.players.splice(desconnectedPlayerIndex, 1)
-        }
-    }
 
     handleNewConnection = (socket:any) => {
 
@@ -129,56 +37,152 @@ class GameControllers{
             return
         }
 
-        const awaitMatchPlayers = this.players.filter((player) => {
-            return player.awaitingMatch
+        const matchsAwaitingPlayers = this.matchs.filter(match => {
+            return match.players.length == 1
         })
 
-        if(awaitMatchPlayers.length === 0){
-            this.players.push({
-                awaitingMatch: true,
+        if(matchsAwaitingPlayers.length > 0){ //Has one or more matches with only one player
+            
+            const matchAwaitingPlayersIndex = this.matchs.indexOf(matchsAwaitingPlayers[0])
+
+            this.matchs[matchAwaitingPlayersIndex].players.push({
                 id: playerId,
-                username: playerName,
-                wins: 0
+                symbol: 'X',
+                username: playerName
             })
+
+            socket.join(this.matchs[matchAwaitingPlayersIndex].roomId)
+            this.socketClient.to(this.matchs[matchAwaitingPlayersIndex].roomId).emit('changeGamedata', this.matchs[matchAwaitingPlayersIndex])
+
+
         }else{
 
-            const oponentIndex = this.players.indexOf(awaitMatchPlayers[0])
+            const matchId = this.matchs.length > 0? this.matchs[this.matchs.length -1].roomId + 1:1
 
-            if(oponentIndex > 0){
+            const newMatchData = {
+                gamedata: generateEmptyGamedata(),
+                inPlaying: playerId,
+                players: [
+                    {
+                        id: playerId,
+                        username: playerName,
+                        symbol: 'O'
+                    }
+                ],
+                roomId: matchId
+            } as matchInterface
 
-                this.players[oponentIndex].awaitingMatch = false
-                const oponent = this.players[oponentIndex]
+            socket.join(matchId)
+
+            this.matchs.push(newMatchData)
 
 
-                this.players.push({
-                    awaitingMatch: false,
-                    id: playerId,
-                    username: playerName,
-                    wins: 0
-                })
-
-                this.matchs.push({
-                    gamedata: [{value: 'X', id: 0}],
-                    players: [
-                        {
-                            id: playerId as string,
-                            username: playerName as string
-                        }, 
-                        {
-                            id: oponent.id as string,
-                            username: oponent.username as string
-                        },
-                    ],
-                    roomId: `${oponent.id}++${playerId}`
-                })
-            }
         }
-        
-        socket.on('disconnect', () => {this.handleDesconnect(socket)})
 
-        console.log(`Player connected: ${playerId}|||${playerName}`)
+        socket.on('disconnect', () => {
+            this.handleDesconnect(socket)
+        })
+
         
     }
+
+    addNewWinAPlayer = (winnerId?: string) => {
+
+        if(!winnerId){
+            return
+        }
+    }
+
+    handleDesconnect = (socket:any) => {
+
+        const desconnectedPlayerId = socket.id
+        const desconnectedPlayerName = socket.handshake.query.nickname
+
+        if(!desconnectedPlayerName){
+            return
+        }
+
+        const matchsWithDesconnectedPlayer = this.matchs.filter((match) => {
+            return match.players.filter((player) => {
+                player.id === desconnectedPlayerId
+            })
+        })
+
+
+        if(matchsWithDesconnectedPlayer.length > 0){
+            
+            const match = matchsWithDesconnectedPlayer[0]
+            const matchIndexInMatchsIndex = this.matchs.indexOf(match)
+
+            if(match.players.length === 1){
+                return this.matchs.splice(matchIndexInMatchsIndex, 1)
+            }else{
+
+                const winner = match.players.filter((player) => {
+                    return player.id !== desconnectedPlayerId
+                })[0]
+
+                this.addNewWinAPlayer(winner?.id)
+
+                this.socketClient.to(match.roomId).emit('win', {
+                    winnerId: winner?.id
+                })
+
+                this.matchs.splice(matchIndexInMatchsIndex, 1)
+
+                const matchsAwaitingPlayers = this.matchs.filter(match => {
+                    return match.players.length == 1
+                })
+
+                if(matchsAwaitingPlayers.length > 0){ //Has one or more matches with only one player
+                    
+                    const matchAwaitingPlayersIndex = this.matchs.indexOf(matchsAwaitingPlayers[0])
+        
+                    this.matchs[matchAwaitingPlayersIndex].players.push({
+                        id: winner.id,
+                        symbol: 'X',
+                        username: winner.username
+                    })
+        
+                    socket.join(this.matchs[matchAwaitingPlayersIndex].roomId)
+                    this.socketClient.to(this.matchs[matchAwaitingPlayersIndex].roomId).emit('changeGamedata', this.matchs[matchAwaitingPlayersIndex])
+        
+        
+                }else{
+
+
+                    const matchId = this.matchs.length > 0? this.matchs[this.matchs.length -1].roomId + 1:1
+                    
+        
+                    const newMatchData = {
+                        gamedata: generateEmptyGamedata(),
+                        inPlaying: winner?.id,
+                        players: [
+                            {
+                                id: winner?.id,
+                                username: winner?.id,
+                                symbol: 'O'
+                            }
+                        ],
+                        roomId: matchId
+                    } as matchInterface
+        
+                    socket.join(matchId)
+        
+                    this.matchs.push(newMatchData)
+        
+        
+                }
+
+            }
+
+        }else{
+            return
+        }
+    }
+
+
+
 }
 
 export default GameControllers
