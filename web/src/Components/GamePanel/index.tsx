@@ -19,7 +19,8 @@ export default function GamePainel(){
         restartMatch,
         playing,
         changeGamemode,
-        gamemode
+        gamemode,
+        mySymbol
     } = useContext(GameContext)
 
     const [nickname, setNickname] = useState<string>('')
@@ -134,8 +135,20 @@ export default function GamePainel(){
             <div className={styles.playingNowContainer}>
                 <h2>Playing now:</h2>
                 <div>
-                    <h2 className={playing === 'X'? styles.playingNow:null}>X</h2>
-                    <h2 className={playing === 'O'? styles.playingNow:null}>O</h2>
+                    <div className={playing === 'X'? styles.playingNow:null}>
+                        <h1>X</h1>
+                        <h2>{crossName}</h2>
+                        <h3>{
+                            gamemode === 'local'? null: mySymbol === 'X'? 'You':'Opponent'
+                        }</h3>
+                    </div>
+                    <div className={playing === 'O'? styles.playingNow:null}>
+                        <h1>O</h1>
+                        <h2>{circleName}</h2>
+                        <h3>{
+                            gamemode === 'local'? null:mySymbol === 'O'? 'You':'Opponent'
+                        }</h3>
+                    </div>
                 </div>
             </div>
 

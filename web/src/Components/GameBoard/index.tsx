@@ -11,7 +11,9 @@ export default function GameBoard(){
         handleMove,
         winPositions,
         gamemode,
-        circleName
+        circleName,
+        areAwaitingplayer,
+        itsMyTurn
     } = useContext(GameContext)
 
     return(
@@ -22,29 +24,40 @@ export default function GameBoard(){
                         <h1>You need add your nick in game panel to play in a server</h1>
                     </div>
                 ): (
-                    <div className={styles.gameButtonsContainer}>
-                        {
-                            gamedata.map((data) => {
-                                return(
-                                    <button
-                                        onClick={()=> {handleMove(data.id)}}
-                                        key={data.id}
-                                        
-                                    >
-                                        {
-                                            data.value === 'empty'? null:(
-                                                <strong className={winPositions?.includes(data.id)?styles.winPosition:null}>{data.value}</strong>
-                                            )
-                                        }
-                                        <h2 
+                    areAwaitingplayer? (
+                        <div className={styles.errorContainer}>
+                            <h1>await oponent</h1>
+                        </div>
+                    ): (
+                        <div className={styles.gameButtonsContainer}>
+                            {
+                                gamedata.map((data) => {
+                                    return(
+                                        <button
+                                            className={
+                                                gamemode === 'local'? null: (
+                                                    itsMyTurn? null:styles.blockedButton
+                                                )
+                                            }
+                                            onClick={()=> {handleMove(data.id)}}
+                                            key={data.id}
+                                            
                                         >
-                                            {data.id}
-                                        </h2>
-                                    </button>
-                                )
-                            })
-                        }
-                    </div>
+                                            {
+                                                data.value === 'empty'? null:(
+                                                    <strong className={winPositions?.includes(data.id)?styles.winPosition:null}>{data.value}</strong>
+                                                )
+                                            }
+                                            <h2 
+                                            >
+                                                {data.id}
+                                            </h2>
+                                        </button>
+                                    )
+                                })
+                            }
+                        </div>
+                    )
                 )
             }
         </section>

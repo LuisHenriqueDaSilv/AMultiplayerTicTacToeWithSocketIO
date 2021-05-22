@@ -21,7 +21,10 @@ export interface ContextDataInterface{
     circleName: string,
     playing: 'O'| 'X',
     winPositions: number[]| null,
-    gamemode: 'multiplayer'| 'local'
+    gamemode: 'multiplayer'| 'local',
+    areAwaitingplayer: boolean,
+    itsMyTurn: boolean,
+    mySymbol: 'X'| 'O',
     restartMatch: () => void,
     resetScore: () => void,
     changeGamemode: (gamemode: 'multiplayer'| 'local') => void,
@@ -45,4 +48,27 @@ export interface ContextDataInterface{
             wins: number
         }
     }
+}
+
+export interface onlineMatchInterface {
+    gamedata: [
+        {
+            id: number,
+            value: 'X'| 'O'| 'empty'
+        }
+    ],
+    players: {
+        username: string,
+        id: string,
+        symbol: 'X'| 'O'
+    }[],
+    roomId: number,
+    inPlaying: string
+}
+
+export interface gameEndDataInterface {
+    win: string | false,
+    tie: boolean,
+    winner: string | null,
+    positions: [number]| null
 }

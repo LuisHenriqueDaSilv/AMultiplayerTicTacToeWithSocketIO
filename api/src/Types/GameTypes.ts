@@ -13,12 +13,6 @@ export interface rankInterface {
     }
 }
 
-export interface playerInterface {
-    wins: number,
-    username: string,
-    id: string,
-}
-
 export interface matchInterface {
     gamedata: [
         {
@@ -26,13 +20,21 @@ export interface matchInterface {
             value: 'X'| 'O'| 'empty'
         }
     ],
-    players: [
-        {
-            username: string,
-            id: string,
-            symbol: 'X'| 'O'
-        }
-    ],
+    players: {
+        username: string,
+        id: string,
+        symbol: 'X'| 'O'
+    }[],
     roomId: number,
     inPlaying: string
+}
+
+export interface handleMoveDataInterface{
+    index: number
+}
+
+export interface playerInterface {
+    userid: string,
+    wins: number,
+    username: string
 }
