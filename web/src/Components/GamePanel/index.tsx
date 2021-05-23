@@ -20,7 +20,8 @@ export default function GamePainel(){
         playing,
         changeGamemode,
         gamemode,
-        mySymbol
+        mySymbol,
+        onlineName
     } = useContext(GameContext)
 
     const [nickname, setNickname] = useState<string>('')
@@ -39,6 +40,12 @@ export default function GamePainel(){
 
     }
 
+    const disableNameForm = gamemode === 'multiplayer'? (
+        onlineName? true:false
+    ):(
+        circleName && crossName?true:false
+    )
+
 
     return(
         <section className={styles.gamePanelContainer}>
@@ -51,13 +58,13 @@ export default function GamePainel(){
                 <div>
                     <button
                         onClick={() => {changeGamemode('multiplayer')}}
-                        className={gamemode === 'multiplayer'&&styles.selectedGamemodeButton}
+                        className={gamemode === 'multiplayer'&& styles.selectedGamemodeButton}
                     >
                         Multiplayer
                     </button>
                     <button
                         onClick={() => {changeGamemode('local')}}
-                        className={gamemode === 'local' &&styles.selectedGamemodeButton}
+                        className={gamemode === 'local' && styles.selectedGamemodeButton}
 
                     >
                         Local
@@ -85,7 +92,10 @@ export default function GamePainel(){
                                 </>
                             )
                         ) : (
-                            circleName? 'You need to switch the game mode to local and then multiplayer again to edit your nickname':'Your nickname'
+                            onlineName? (
+                                `You need switch the game mode to local
+                                and then multiplayer again to edit your nickname`
+                            ):'Your nickname'
                         )
                     }
                 </h1>
@@ -96,23 +106,11 @@ export default function GamePainel(){
                         placeholder="Nick"
                         maxLength={20}
                         onChange={(e) => setNickname(e.target.value)}
-                        disabled={
-                            gamemode === 'multiplayer'? (
-                                circleName? true:false
-                            ):(
-                                circleName && crossName?true:false
-                            )
-                        }
+                        disabled={disableNameForm}
                         value={nickname}
                     />
                     <button
-                        disabled={
-                            gamemode === 'multiplayer'? (
-                                circleName? true:false
-                            ):(
-                                circleName && crossName?true:false
-                            )
-                        }
+                        disabled={disableNameForm}
                     >
                         <AiOutlineCheck
                             size="1.5rem"
@@ -124,8 +122,14 @@ export default function GamePainel(){
             </form>
 
             <div className={styles.gameOptionsButtonsContainer}>
-                <button disabled={gamemode==='multiplayer'} onClick={restartMatch}>Restart match</button>
-                <button disabled={gamemode==='multiplayer'} onClick={resetScore}>Reset score</button>
+                <button
+                    disabled={gamemode==='multiplayer'} 
+                    onClick={restartMatch}
+                >Restart match</button>
+                <button 
+                    disabled={gamemode==='multiplayer'}
+                    onClick={resetScore}
+                >Reset score</button>
             </div>
 
             <div className={styles.playingNowContainer}>

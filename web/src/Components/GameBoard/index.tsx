@@ -11,22 +11,22 @@ export default function GameBoard(){
         handleMove,
         winPositions,
         gamemode,
-        circleName,
         areAwaitingplayer,
-        itsMyTurn
+        itsMyTurn,
+        onlineName
     } = useContext(GameContext)
 
     return(
         <section className={styles.gameBoardContainer}>
             {
-                gamemode === 'multiplayer' && !circleName? (
+                gamemode === 'multiplayer' && !onlineName? (
                     <div className={styles.errorContainer}>
                         <h1>You need add your nick in game panel to play in a server</h1>
                     </div>
                 ): (
                     areAwaitingplayer? (
                         <div className={styles.errorContainer}>
-                            <h1>await oponent</h1>
+                            <h1>waiting oponent</h1>
                         </div>
                     ): (
                         <div className={styles.gameButtonsContainer}>
@@ -45,7 +45,11 @@ export default function GameBoard(){
                                         >
                                             {
                                                 data.value === 'empty'? null:(
-                                                    <strong className={winPositions?.includes(data.id)?styles.winPosition:null}>{data.value}</strong>
+                                                    <strong 
+                                                        className={
+                                                            winPositions?.includes(data.id)?styles.winPosition:null
+                                                        }
+                                                    >{data.value}</strong>
                                                 )
                                             }
                                             <h2 

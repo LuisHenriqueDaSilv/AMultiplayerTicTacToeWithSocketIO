@@ -1,5 +1,6 @@
 import {createContext, useEffect, useState} from 'react'
 import socketIo from 'socket.io-client'
+require('dotenv/config')
 
 //Utils
 import generateEmptyGamedata from '../Utils/GenerateEmptyGamedata'
@@ -17,6 +18,7 @@ import {
 //Utils
 import generateEmptyRank from '../Utils/GerenateEmptyRank'
 
+//Context
 const GameContext = createContext({} as ContextDataInterface)
 
 export default GameContext
@@ -59,7 +61,9 @@ export function GameContextProvider({children}:any) {
 
         if(onlineName){
 
-            socketIoClient = socketIo.connect('https://tictactoeapii.herokuapp.com/', {query: {nickname: onlineName}})
+            socketIoClient = socketIo.connect(process.env.BACKEND as string || 'https:localhost:3003', {query: {nickname: onlineName}})
+
+            setAreAwaitingplayer(true)
 
             socketIoClient.on('rank', (rank:RankInterface) => {
                 setRank(rank)
@@ -113,6 +117,10 @@ export function GameContextProvider({children}:any) {
                     })[0]
 
                     alert(`We have a winner! ${data.winner === socketIoClient.id? 'You':'Your opponent'}`)
+
+                    setWinPositions(data.positions)
+                    
+
                 }
 
                 if(data.tie){
@@ -224,6 +232,7 @@ export function GameContextProvider({children}:any) {
 
     const resetScore = (bypass?:boolean) => {
         if(bypass || window.confirm('Reset score?')){
+            setOnlineName('')
             setAreAwaitingplayer(false)
             setCircleName('')
             setCrossName('')
@@ -294,7 +303,8 @@ export function GameContextProvider({children}:any) {
                 gamemode,
                 areAwaitingplayer,
                 itsMyTurn,
-                mySymbol
+                mySymbol,
+                onlineName
             }}
         >
             {children}

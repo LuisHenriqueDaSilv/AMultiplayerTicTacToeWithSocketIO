@@ -1,4 +1,5 @@
 export default function generateEmptyRank(){
+
     return({
         first: {
             username: 'N/A',
@@ -11,4 +12,5 @@ export default function generateEmptyRank(){
             wins: 0
         }
     })
+    
 }

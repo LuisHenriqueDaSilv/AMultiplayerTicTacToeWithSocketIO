@@ -24,6 +24,7 @@ export interface ContextDataInterface{
     gamemode: 'multiplayer'| 'local',
     areAwaitingplayer: boolean,
     itsMyTurn: boolean,
+    onlineName: string,
     mySymbol: 'X'| 'O',
     restartMatch: () => void,
     resetScore: () => void,
