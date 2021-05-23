@@ -3,8 +3,7 @@
 <p align=center></br>This project was created to learn about socketIo and React, and to practice CSS using saas and Javascript using Typescript</p> 
 
 ## **Project status:**
-> **status**: ***working***</br>
-> **next step**: ***Review backend***
+> **status**: ***Finished***</br>
 
 </br>
 

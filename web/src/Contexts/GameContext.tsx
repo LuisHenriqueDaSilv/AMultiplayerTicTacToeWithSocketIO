@@ -1,6 +1,6 @@
 import {createContext, useEffect, useState} from 'react'
 import socketIo from 'socket.io-client'
-require('dotenv/config')
+import 'dotenv/config'
 
 //Utils
 import generateEmptyGamedata from '../Utils/GenerateEmptyGamedata'
@@ -37,10 +37,7 @@ export function GameContextProvider({children}:any) {
     const [gamemode, setGamemode] = useState<'multiplayer'| 'local'>('local')
     const [itsMyTurn, setItsMyTurn] = useState<boolean>(false)
     const [areAwaitingplayer, setAreAwaitingplayer] = useState<boolean>(false)
-    const [mySymbol, setMySymbol] = useState<'X'|'O'>('O')
-
-    const [matchData, setMatchData] = useState<onlineMatchInterface>()
-    
+    const [mySymbol, setMySymbol] = useState<'X'|'O'>('O')    
 
     useEffect(() => {
 
@@ -61,7 +58,7 @@ export function GameContextProvider({children}:any) {
 
         if(onlineName){
 
-            socketIoClient = socketIo.connect(process.env.BACKEND as string || 'https:localhost:3003', {query: {nickname: onlineName}})
+            socketIoClient = socketIo.connect(process.env.BACKEND as string || 'http://localhost:3003', {query: {nickname: onlineName}})
 
             setAreAwaitingplayer(true)
 
@@ -90,7 +87,6 @@ export function GameContextProvider({children}:any) {
 
                 setMySymbol(myInMatch.symbol)
 
-                setMatchData(matchData)
 
                 if(matchData.inPlaying === socketIoClient.id){
                     setItsMyTurn(true)
@@ -112,10 +108,6 @@ export function GameContextProvider({children}:any) {
 
                 if(data.win){
 
-                    const winnerPlayer = matchData?.players.filter((player) => {
-                        return player.id === data.winner
-                    })[0]
-
                     alert(`We have a winner! ${data.winner === socketIoClient.id? 'You':'Your opponent'}`)
 
                     setWinPositions(data.positions)
@@ -130,6 +122,7 @@ export function GameContextProvider({children}:any) {
 
         }
 
+    // eslint-disable-next-line
     }, [onlineName])
 
     useEffect(() => {
@@ -189,6 +182,7 @@ export function GameContextProvider({children}:any) {
             }
         }
 
+    // eslint-disable-next-line
     }, [gamedata]) 
 
 
@@ -207,6 +201,7 @@ export function GameContextProvider({children}:any) {
         let winner:any = false
         let positions:any = false
 
+        // eslint-disable-next-line
         winnerPositions.map(positions_ => {
             if(
                 gamedata[positions_[0]].value === gamedata[positions_[1]].value &&

@@ -11,7 +11,7 @@ const expressApp = express()
 const httpServer = http.createServer(expressApp)
 const socketClient = socketIo(httpServer)
 
-const {handleNewConnection, matchs, rank} = new GameControllers(socketClient)
+const {handleNewConnection} = new GameControllers(socketClient)
 
 socketClient.on('connection', handleNewConnection)
 
