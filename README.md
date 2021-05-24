@@ -66,10 +66,17 @@ npm start
 ### **Start web**
 </br>
 
+
+
 ##### **Enter the directory**
 
 ```bash
 cd web
+```
+
+##### **Install the dependencies** 
+```bash
+npm i
 ```
 
 ##### **Run**
